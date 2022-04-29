@@ -1,0 +1,5 @@
+requests
+pycryptodome
+PyQt5
+pandas
+matplotlib
