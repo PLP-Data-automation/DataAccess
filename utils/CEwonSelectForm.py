@@ -11,15 +11,19 @@ class UIEwonSelectForm(object):
         layout.addLayout( subLayout_1 )
         layout.addLayout( subLayout_2 )
 
-        self.ewonSelector = QtWidgets.QComboBox()
-        self.ewonSelector.addItems( ewons )
+        self.Selector = QtWidgets.QListWidget()
+        self.Selector.addItems( ewons )
+        self.Selector.setSelectionMode( QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection )
+        width   = self.Selector.sizeHintForColumn(0) + 2 * self.Selector.frameWidth() + 50
+        height  = self.Selector.sizeHintForRow(0) * 3 + 2 * self.Selector.frameWidth()
+        self.Selector.setFixedSize( width, height )
 
         OK = QtWidgets.QDialogButtonBox.StandardButton.Ok
         CANCEL = QtWidgets.QDialogButtonBox.StandardButton.Cancel
         self.okButton = QtWidgets.QDialogButtonBox( OK | CANCEL )
 
-        subLayout_1.addWidget( QtWidgets.QLabel( "Select an ewon device: " ) )
-        subLayout_1.addWidget( self.ewonSelector )
+        subLayout_1.addWidget( QtWidgets.QLabel( "Select your ewon devices: " ) )
+        subLayout_1.addWidget( self.Selector )
         
         subLayout_2.addWidget( self.okButton )
         
@@ -37,7 +41,10 @@ class CEwonSelectForm( QtWidgets.QDialog, UIEwonSelectForm ):
         self.val = None
 
     def getSelected(self):
-        self.val = self.ewonSelector.currentText()
+        selections = []
+        for item in self.Selector.selectedItems():
+            selections.append( item.text() )
+        self.val = selections
         self.close()
 
     def getRej(self):

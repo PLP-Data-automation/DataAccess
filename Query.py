@@ -1,6 +1,10 @@
-from utils.CQuery import CQuery
+import os 
+import json
+from utils.CManager import CManager
+from utils.CTableUtils import CTableUtils
 
-class Query( CQuery ):
+
+class Query( CManager ):
     def __init__(self, path, url="https://m2web.talk2m.com/"):
         super().__init__(path, url)
 
@@ -22,3 +26,10 @@ def filterTable( df ):
     dt.reset_index( drop=True, inplace=True )
     return dt
 
+def reduceTable( df ):
+    config_path = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), "config.json" )
+    with open( config_path, "r" ) as file:
+        config = json.load( file )
+    rcols = config.get( "columns-reduced", [] )
+    util = CTableUtils()
+    return util.reduce_table( df, rcols )
