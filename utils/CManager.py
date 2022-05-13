@@ -64,7 +64,6 @@ class CManager(CQueryCore):
 
     def getTable(self, AST_Param, date_dialog=True ):
         if date_dialog: AST_Param = f"{AST_Param}{dateDialog()}"
-        print( AST_Param )
         data_frames = {}
         for device in self.devices:
             with device:

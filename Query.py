@@ -3,9 +3,10 @@ import json
 from utils.CManager import CManager
 from utils.CTableUtils import CTableUtils
 
+LOCAL_PATH = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), "dump" )
 
 class Query( CManager ):
-    def __init__(self, path, url="https://m2web.talk2m.com/"):
+    def __init__(self, path=LOCAL_PATH, url="https://m2web.talk2m.com/"):
         super().__init__(path, url)
 
 def filterTable( df ):
