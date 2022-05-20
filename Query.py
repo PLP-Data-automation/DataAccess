@@ -35,27 +35,29 @@ def reduceTable( df ):
     util = CTableUtils()
     return util.reduce_table( df, rcols )
 
-def run_query( mode ):
+def run_query( mode : list = [ "full", "full-filter", "reduced", "reduced-filter" ] ):
     """
-    Modes: full, full-filter, reduced, reduced-filter
+    Modes: [ full, full-filter, reduced, reduced-filter ]
     """
-    if "full" in mode.lower():
-        try:
-            with Query() as q:
-                df = q.getTable( "$dtHT$ftT" )
-        except Exception:
-            print( "Closing program!" )
-    elif "reduced" in mode.lower():
-        try:
-            with Query() as q:
-                df = reduceTable( q.getTable( "$dtHT$ftT" ) )
-        except Exception:
-            print( "Closing program!" )
+    try:
+        with Query() as q:
+            df = q.getTable( "$dtHT$ftT" )
+    except Exception:
+        print( "Closing program!" )
+
+    fdf = filterTable( df )
+    results = {}
     
-    if "filter" in mode.lower():
-        df = filterTable( df )
+    if "full" in mode:
+        results[ "full" ] = df
+    if "reduced" in mode:
+        results[ "reduced" ] = reduceTable( df )
+    if "full-filter" in mode:
+        results[ "full-filter" ] = fdf
+    if "reduced-filter" in mode:
+        results[ "reduced-filter" ] = reduceTable( fdf )
     
-    return df
+    return results
 
 
 
