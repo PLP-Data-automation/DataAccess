@@ -53,7 +53,7 @@ def run_query( mode ):
             print( "Closing program!" )
     
     if "filter" in mode.lower():
-        df = filter( df )
+        df = filterTable( df )
     
     return df
 
