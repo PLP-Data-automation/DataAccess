@@ -34,3 +34,30 @@ def reduceTable( df ):
     rcols = config.get( "columns-reduced", [] )
     util = CTableUtils()
     return util.reduce_table( df, rcols )
+
+def run_query( mode ):
+    """
+    Modes: full, full-filter, reduced, reduced-filter
+    """
+    if "full" in mode.lower():
+        try:
+            with Query() as q:
+                df = q.getTable( "$dtHT$ftT" )
+        except Exception:
+            print( "Closing program!" )
+    elif "reduced" in mode.lower():
+        try:
+            with Query() as q:
+                df = reduceTable( q.getTable( "$dtHT$ftT" ) )
+        except Exception:
+            print( "Closing program!" )
+    
+    if "filter" in mode.lower():
+        df = filter( df )
+    
+    return df
+
+
+
+
+
