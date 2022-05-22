@@ -1,7 +1,38 @@
+"""
+Author: Fuentes Juvera, Luis
+E-mail: luis.fuju@outlook.com
+username: LuisDFJ
+
+CDateSelectForm Module: Creates a GUI for date selection.
+
+Promps calendar to select the time interval to fetch information
+from devices.
+
+Classes
+-------
+CCalendarWidget(  )
+UIDateSelectForm( DialogWIndow : QtWidgets.QWidget | None )
+CDateSelectForm( parent : QtWidgets.QWidget | None )
+
+Functions
+---------
+Dialog( ) -> str | None
+
+"""
+
 from PyQt5 import QtCore, QtWidgets, QtGui
 import os
 
 class CCalendarWidget( QtWidgets.QCalendarWidget ):
+    """
+    Widget for selecting multiple dates using shift key.
+
+    Methods
+    -------
+    format_range( format ) -> None
+    date_is_clicked( date ) -> None
+
+    """
     def __init__(self):
         super( CCalendarWidget, self ).__init__()
         self.s_date = None
@@ -32,7 +63,28 @@ class CCalendarWidget( QtWidgets.QCalendarWidget ):
 
 
 class UIDateSelectForm(object):
-    def setupUI(self, DialogWindow, date ):
+    """
+    Graphic setup of date selection form.
+
+    Attributes
+    ----------
+    Calendar : CCalendarWidget
+        Calendar for multiple selection.
+    
+    Methods
+    -------
+    setupUI( DialogWindow ) -> None
+    """
+    def setupUI(self, DialogWindow ) -> None:
+        """
+        Graphic setup of date selection form.
+
+        Parameters
+        ----------
+        DialogWindow : QtWidgets.QWidget
+            Parent QWidget.
+
+        """
         DialogWindow.setWindowTitle( "Select Date" )
         layout = QtWidgets.QVBoxLayout( DialogWindow )
         subLayout_1 = QtWidgets.QHBoxLayout()
@@ -54,6 +106,22 @@ class UIDateSelectForm(object):
         QtCore.QMetaObject.connectSlotsByName( DialogWindow )
 
 class CDateSelectForm( QtWidgets.QDialog, UIDateSelectForm ):
+    """
+    Logical control of date selection form.
+
+    Attributes
+    ----------
+    val : str | None
+        Variable reserved for selected date interval.
+
+    Methods
+    -------
+    getSelected( ) -> None:
+        Callback when devices selected.
+    getRej( ) -> None:
+        Callback when operation canceled.
+
+    """
     def __init__(self, parent=None):
         super( QtWidgets.QDialog, self ).__init__( parent=parent )
         iconpath = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), "icon.png" )
@@ -63,8 +131,10 @@ class CDateSelectForm( QtWidgets.QDialog, UIDateSelectForm ):
         self.okButton.rejected.connect( self.getRej )
         self.val = None
 
-    def getSelected(self):
-        
+    def getSelected(self) -> None:
+        """
+        Callback when devices selected.
+        """
         currDate = QtCore.QDate().currentDate()
         d2s = currDate.daysTo( self.calendar.s_date if self.calendar.s_date else currDate )
         d2e = currDate.daysTo( self.calendar.e_date if self.calendar.e_date else currDate )
@@ -75,11 +145,23 @@ class CDateSelectForm( QtWidgets.QDialog, UIDateSelectForm ):
         self.val = f"$st_d{ abs( d_low ) }$et_d{ abs( d_high ) }"
         self.close()
 
-    def getRej(self):
+    def getRej(self) -> None:
+        """
+        Callback when operation canceled.
+        """
         self.val = None
         self.close()
         
 def Dialog():
+    """
+    Dialog box wrapper for date selection form.
+
+    Returns
+    -------
+    str | None
+        Selected date.
+
+    """
     app = QtWidgets.QApplication( [] )
     dialog = CDateSelectForm()
     dialog.exec()

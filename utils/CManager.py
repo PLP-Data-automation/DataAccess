@@ -1,22 +1,88 @@
-from ast import AST
-from utils.CQuery import CQuery
-from utils.CQueryCore import CQueryCore
+"""
+Author: Fuentes Juvera, Luis
+E-mail: luis.fuju@outlook.com
+username: LuisDFJ
+
+CManager Module: High-level abstraction for accessing m2web resources.
+
+CManager uses Mid-Level abstraction and forms to set a session and prompt
+the selection panels for accessing the ewon devices.
+
+Classes
+-------
+CManager( path : str, url : str ) 
+
+"""
+from utils.CQuery       import CQuery
+from utils.CQueryCore   import CQueryCore
 from utils.CCredentials import CCredentials
-from utils.CTableUtils import CTableUtils
-from utils.CEwonSelectForm import Dialog as selectDialog
-from utils.CLogForm import Dialog as logDialog
-from utils.CLogInForm import Dialog as loginDialog
+from utils.CTableUtils  import CTableUtils
+from utils.CEwonSelectForm  import Dialog as selectDialog
+from utils.CLogForm         import Dialog as logDialog
+from utils.CLogInForm       import Dialog as loginDialog
 from utils.CCredentialsForm import Dialog as credDialog
-from utils.CDateSelectForm import Dialog as dateDialog
+from utils.CDateSelectForm  import Dialog as dateDialog
 
 import os
+import pandas
 
 class CManager(CQueryCore):
-    def __init__(self, path, url="https://m2web.talk2m.com/"):
+    """
+    CManager Module: High-level abstraction for accessing m2web resources.
+
+    CManager uses Mid-Level abstraction and forms to set a session and prompt
+    the selection panels for accessing the ewon devices.
+
+    Attributes
+    ----------
+    path : str
+        Path for dumping credentials.
+    cred : CCredentials
+        Credential manager object.
+    key : str
+        Credentials encryption password.
+    
+    Methods
+    -------
+    getLogIn(self, path : str) -> None
+        Log In abstraction.
+    getCredentials(self, key : str, mode : bool=True ) -> dict
+        getCredentials from credentials manager.
+    selectewon( self, ewons : dict ) -> list
+        Select Ewon abstraction.
+    ewons(self) -> dict
+        getewons() mid-level wrapper.
+    getTable(self, AST_Param : str, date_dialog : bool=True ) -> pandas.DataFrame
+        Get Table wrapper.
+
+
+    """
+    def __init__(self, path : str, url : str="https://m2web.talk2m.com/"):
+        """
+        CManager Module: High-level abstraction for accessing m2web resources.
+
+        Parameters
+        ----------
+        path : str
+            Path for dumping credentials.
+        url : str
+            m2web REST API Domain.
+        """
         super().__init__( url=url )
         self.path = path
 
-    def getLogIn(self, path):
+    def getLogIn(self, path : str) -> None:
+        """
+        Log In abstraction.
+
+        Promps credential manager forms, for creating or loading
+        a credential bundle. Save credential bundle in key, cred
+
+        Parameters
+        ----------
+        path : str
+            Path to dump credentials.
+        """
         mode = logDialog()
         if mode == "load":
             password, credpath = loginDialog( path )
@@ -29,7 +95,27 @@ class CManager(CQueryCore):
         self.key    = password
         self.cred   = cred
 
-    def getCredentials(self, key, mode=True ):
+    def getCredentials(self, key : str, mode : bool=True ) -> dict:
+        """
+        getCredentials from credentials manager.
+
+        Credntials decrypted from manager using key. Mode selects
+        type of credentials to gather.
+
+        Parameters
+        ----------
+        key : str
+            Credentials password.
+        mode : bool
+            Select if account credentials [true] or
+            device credentials [false]
+        
+        Returns
+        -------
+        dict
+            Credentials deencrypted.
+
+        """
         params = self.cred.load( key )
         credentials = {}
         device_credentials = {}
@@ -43,14 +129,52 @@ class CManager(CQueryCore):
         else:
             return device_credentials
 
-    def selectewon( self, ewons ):
+    def selectewon( self, ewons : dict ) -> list:
+        """
+        Select Ewon abstraction.
+
+        Promps devices on a selectable form. Encodes the selections
+        on a dictionary.
+
+        Parameters
+        ----------
+        ewon : dict
+            Dictionary of available ewons.
+            { "<name>": { "id": ..., "encodedName": ... }, ... }
+        
+        Returns
+        -------
+        list
+            List of selected ewons.
+            [ { "id": ..., "encodedName": ... }, ... ]
+
+        """
         ewon_names = list( ewons.keys() )
         selected_ewons = []
         for ewon_name in selectDialog( ewon_names ):
             selected_ewons.append( ewons.get( ewon_name, {} ) )
         return selected_ewons
 
-    def ewons(self):
+    def ewons(self) -> dict:
+        """
+        getewons() mid-level wrapper.
+
+        Gets complete ewons list. Format to per name dictionary
+        structure:
+            { "<name>": { 
+                "id": ...,
+                "encodedName": ...
+                }, 
+              ...
+            }
+
+        Returns
+        -------
+        dict
+            Dictionary of available ewons.
+            { "<name>": { "id": ..., "encodedName": ... }, ... }
+        
+        """
         ewons_dict = self.getewons()
         ewons = {}
         if ewons_dict != None:
@@ -62,7 +186,25 @@ class CManager(CQueryCore):
                 }
         return ewons
 
-    def getTable(self, AST_Param, date_dialog=True ):
+    def getTable(self, AST_Param : str, date_dialog : bool=True ) -> pandas.DataFrame:
+        """
+        Get Table wrapper.
+
+        Lowlevel call to getTable on each selected device (CQuery type).
+
+        Parameters
+        ----------
+        AST_Param : str
+            Data Table format for m2web api.
+        date_dialog : bool
+            Prompt date form.
+
+        Returns
+        -------
+        pandas.DataFrame
+            Combines tables from different sources.
+
+        """
         if date_dialog: AST_Param = f"{AST_Param}{dateDialog()}"
         data_frames = {}
         for device in self.devices:

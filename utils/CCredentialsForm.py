@@ -1,8 +1,60 @@
+"""
+Author: Fuentes Juvera, Luis
+E-mail: luis.fuju@outlook.com
+username: LuisDFJ
+
+CCredentialsForm Module: Creates a GUI for entering credentials.
+
+Dumps credentials: t2maccount, t2musername, t2mpassword, t2mdeveloperid
+t2mdeviceusername, t2mdevicepassword.
+
+Classes
+-------
+UICredentialsForm( DialogWIndow : QtWidgets.QWidget | None )
+CCredentialsForm( parent : QtWidgets.QWidget | None )
+
+Functions
+---------
+Dialog(  ) -> tuple( dict, bytes )
+
+"""
+
 from PyQt5 import QtCore, QtWidgets, QtGui
 import os
 
 class UICredentialsForm(object):
-    def setupUI(self, DialogWindow):
+    """
+    Graphic setup of credentials form.
+
+    Attributes
+    ----------
+    account : QtWidgets.QLineEdit
+        Line for t2maccount.
+    username : QtWidgets.QLineEdit
+        Line for t2musername.
+    password : QtWidgets.QLineEdit
+        Line for t2mpassword.
+    devid : QtWidgets.QLineEdit
+        Line for t2mdeveloperid.
+    dusername : QtWidgets.QLineEdit
+        Line for t2mdeviceusername.
+    dpassword : QtWidgets.QLineEdit
+        Line for t2mdevicepassword.
+
+    Methods
+    -------
+    setupUI( DialogWindow ) -> None
+    """
+    def setupUI(self, DialogWindow) -> None:
+        """
+        Graphic setup of credentials form.
+
+        Parameters
+        ----------
+        DialogWindow : QtWidgets.QWidget
+            Parent QWidget.
+
+        """
         DialogWindow.setWindowTitle( "New Credentials" )
         layout              = QtWidgets.QVBoxLayout()
         subLayout_form      = QtWidgets.QHBoxLayout()
@@ -58,6 +110,26 @@ class UICredentialsForm(object):
         QtCore.QMetaObject.connectSlotsByName( DialogWindow )
 
 class CCredentialsForm( QtWidgets.QDialog, UICredentialsForm ):
+    """
+    Logical control of credentials form.
+
+    Attributes
+    ----------
+    val : dict | None
+        Variable reserved for credentials dict.
+    cname : str | None
+        Variable reserved for naming credentials.
+    cpswd : str | None
+        Variable reserved for encrypting credentials.
+
+    Methods
+    -------
+    getSelected( ) -> None:
+        Callback when devices selected.
+    getRejected( ) -> None:
+        Callback when operation canceled.
+
+    """
     def __init__(self, parent=None):
         super( QtWidgets.QDialog, self ).__init__( parent=parent )
         iconpath = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), "icon.png" )
@@ -69,7 +141,10 @@ class CCredentialsForm( QtWidgets.QDialog, UICredentialsForm ):
         self.cname = None
         self.cpswd = None
 
-    def getSelected(self):
+    def getSelected(self) -> None:
+        """
+        Callback when devices selected.
+        """
         self.val = {
             "t2maccount"        : self.account.text(),
             "t2musername"       : self.username.text(),
@@ -85,13 +160,25 @@ class CCredentialsForm( QtWidgets.QDialog, UICredentialsForm ):
             self.cpswd = pswd
             self.close()
 
-    def getRejected(self):
+    def getRejected(self) -> None:
+        """
+        Callback when operation canceled.
+        """
         self.val = None
         self.cname = None
         self.cpswd = None
         self.close()
         
 def Dialog():
+    """
+    Dialog box wrapper for credentials form.
+
+    Returns
+    -------
+    tuple( dict | None, bytes | None, str | None )
+        Selected credentials and dump parameters.
+
+    """
     app = QtWidgets.QApplication( [] )
     dialog = CCredentialsForm()
     dialog.exec()
