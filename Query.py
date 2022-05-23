@@ -51,7 +51,6 @@ def split_table( df : pandas.DataFrame, col : str = "LEGEND" ) -> dict:
     return df_dict
 
 def _filterTable( df : pandas.DataFrame, col : str = "DISPONIBILIDAD" ) -> pandas.DataFrame:
-    print( df )
     rows = []
     flag = False
     disponibility_1 = 0
@@ -64,8 +63,6 @@ def _filterTable( df : pandas.DataFrame, col : str = "DISPONIBILIDAD" ) -> panda
         disponibility_1 = disponibility
     
     rows = [i for i in rows if i >= 0]
-    print( rows )
-    
     dt = df.iloc[rows]
     dt.reset_index( drop=True, inplace=True )
     return dt
@@ -96,9 +93,11 @@ def filterTable( df : pandas.DataFrame, col : str = "DISPONIBILIDAD", colsplit :
     df_list = []
     for key in list( df_dict.keys() ):
         df_list.append( _filterTable( df_dict[ key ], col ) )
-    dt = pandas.concat( df_list )
-    dt.reset_index( drop=True, inplace=True )
-    return dt
+    if len( df_list ):
+        dt = pandas.concat( df_list )
+        dt.reset_index( drop=True, inplace=True )
+        return dt
+    return df
 
 
 def reduceTable( df : pandas.DataFrame ) -> pandas.DataFrame:

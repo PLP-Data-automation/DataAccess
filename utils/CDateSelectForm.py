@@ -126,7 +126,7 @@ class CDateSelectForm( QtWidgets.QDialog, UIDateSelectForm ):
         super( QtWidgets.QDialog, self ).__init__( parent=parent )
         iconpath = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), "icon.png" )
         self.setWindowIcon( QtGui.QIcon( iconpath ) )
-        self.setupUI( self, None )
+        self.setupUI( self )
         self.okButton.accepted.connect( self.getSelected )
         self.okButton.rejected.connect( self.getRej )
         self.val = None
