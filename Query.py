@@ -20,8 +20,8 @@ run_query( mode : list = [ "full", "full-filter", "reduced", "reduced-filter" ] 
 import os
 import json
 import pandas
-from utils.CManager import CManager
-from utils.CTableUtils import CTableUtils
+from DataAccess.utils.CManager import CManager
+from DataAccess.utils.CTableUtils import CTableUtils
 
 LOCAL_PATH = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), "dump" )
 

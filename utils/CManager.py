@@ -13,15 +13,15 @@ Classes
 CManager( path : str, url : str ) 
 
 """
-from utils.CQuery       import CQuery
-from utils.CQueryCore   import CQueryCore
-from utils.CCredentials import CCredentials
-from utils.CTableUtils  import CTableUtils
-from utils.CEwonSelectForm  import Dialog as selectDialog
-from utils.CLogForm         import Dialog as logDialog
-from utils.CLogInForm       import Dialog as loginDialog
-from utils.CCredentialsForm import Dialog as credDialog
-from utils.CDateSelectForm  import Dialog as dateDialog
+from DataAccess.utils.CQuery       import CQuery
+from DataAccess.utils.CQueryCore   import CQueryCore
+from DataAccess.utils.CCredentials import CCredentials
+from DataAccess.utils.CTableUtils  import CTableUtils
+from DataAccess.utils.CEwonSelectForm  import Dialog as selectDialog
+from DataAccess.utils.CLogForm         import Dialog as logDialog
+from DataAccess.utils.CLogInForm       import Dialog as loginDialog
+from DataAccess.utils.CCredentialsForm import Dialog as credDialog
+from DataAccess.utils.CDateSelectForm  import Dialog as dateDialog
 
 import os
 import pandas

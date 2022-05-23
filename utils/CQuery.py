@@ -10,8 +10,8 @@ Classes
 CQuery( cred : CCredentials, key : str, ewon : dict, url : str="https://m2web.talk2m.com/")
 
 """
-from utils.CQueryCore import CQueryCore
-from utils.CCredentials import CCredentials
+from DataAccess.utils.CQueryCore import CQueryCore
+from DataAccess.utils.CCredentials import CCredentials
 import pandas
 
 class CQuery(CQueryCore):
