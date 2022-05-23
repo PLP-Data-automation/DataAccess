@@ -2,6 +2,13 @@
     "columns-reduced": [
         "OEE",
         "DISPONIBILIDAD",
-        "RENDIMIENTO"
+        "RENDIMIENTO",
+        "PIEZAS_TIEMPOREAL",
+        "TIEMPO_PRODACTUAL",
+        "num_parte",
+        "numero_de_orden",
+        "pz_rechazadas",
+        "tiempo_parosnoplanificados",
+        "tiempo_parosplanificados"
     ]
 }
