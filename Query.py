@@ -41,26 +41,17 @@ class Query( CManager ):
         super().__init__(path, url)
 
 
-def filterTable( df : pandas.DataFrame, col : str = "DISPONIBILIDAD" ) -> pandas.DataFrame:
+def split_table( df : pandas.DataFrame, col : str = "LEGEND" ) -> dict:
     """
-    Function to filter results tables.
-
-    Interates through the dataframe (df) and collects valid rows when
-    end of shift is detected.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        Table as a DataFrame.
-    col : str
-        Default DISPONIBILIDAD. Column to detect end of shift.
-
-    Returns
-    -------
-    pandas.DataFrame
-        Filtered Table.
-
+    Decomposes the table in a dictionary per LEGEND.
     """
+    df_dict = {}
+    for legend in df[col].unique():
+        df_dict[ legend ] = df.loc[ df[col] == legend ].reset_index( drop=True )
+    return df_dict
+
+def _filterTable( df : pandas.DataFrame, col : str = "DISPONIBILIDAD" ) -> pandas.DataFrame:
+    print( df )
     rows = []
     flag = False
     disponibility_1 = 0
@@ -73,7 +64,39 @@ def filterTable( df : pandas.DataFrame, col : str = "DISPONIBILIDAD" ) -> pandas
         disponibility_1 = disponibility
     
     rows = [i for i in rows if i >= 0]
+    print( rows )
+    
     dt = df.iloc[rows]
+    dt.reset_index( drop=True, inplace=True )
+    return dt
+
+def filterTable( df : pandas.DataFrame, col : str = "DISPONIBILIDAD", colsplit : str = "LEGEND" ) -> pandas.DataFrame:
+    """
+    Function to filter results tables.
+
+    Interates through the dataframe (df) and collects valid rows when
+    end of shift is detected.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Table as a DataFrame.
+    col : str
+        Default DISPONIBILIDAD. Column to detect end of shift.
+    colsplit : str
+        Default LEGEND. Column to split table.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Filtered Table.
+
+    """
+    df_dict = split_table( df, colsplit )
+    df_list = []
+    for key in list( df_dict.keys() ):
+        df_list.append( _filterTable( df_dict[ key ], col ) )
+    dt = pandas.concat( df_list )
     dt.reset_index( drop=True, inplace=True )
     return dt
 
