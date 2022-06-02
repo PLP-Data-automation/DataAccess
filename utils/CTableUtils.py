@@ -15,6 +15,7 @@ CTableUtils( )
 """
 
 import pandas
+import numpy
 
 class CTableUtils():
     """
@@ -32,7 +33,7 @@ class CTableUtils():
     def __init__( self ):
         pass
 
-    def reduce_table( self, df : pandas.DataFrame, cols : list ) -> pandas.DataFrame:
+    def reduce_table( self, df : pandas.DataFrame, cols : list, kcols : list = [] ) -> pandas.DataFrame:
         """
         Cuts columns not included in cols list.
 
@@ -43,7 +44,8 @@ class CTableUtils():
         df : pandas.DataFrame
         cols : list
             List of desired columns. Do not include LEGEND, TimeInt or TimeStr
-
+        kcols : list
+            List of columns to strictly keep.
         Returns
         -------
         pandas.DataFrame
@@ -52,7 +54,12 @@ class CTableUtils():
         ncols = [ "LEGEND", "TimeInt", "TimeStr" ] + cols
         rcols = [ col.lower() for col in ncols ]
         common_cols = [ col for col in list( df.columns ) if col.lower() in rcols ]
-        return df[ common_cols ]
+        dt = df[ common_cols ]
+        dt['TimeStr'] = dt['TimeStr'].apply(lambda x: pandas.Timestamp(x).strftime('%m/%d/%Y %H:%M:%S')) #"16/05/2022 16:00:01"
+        for col in kcols:
+            if col not in common_cols:
+                dt[col] = numpy.nan
+        return dt
 
     def combine_tables( self, data_frames : dict ) -> pandas.DataFrame:
         """

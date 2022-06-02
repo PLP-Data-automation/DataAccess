@@ -40,6 +40,22 @@ class Query( CManager ):
     def __init__(self, path=LOCAL_PATH, url="https://m2web.talk2m.com/"):
         super().__init__(path, url)
 
+def parse_undef( df : pandas.DataFrame, val : str = "Undef", to = None ) -> pandas.DataFrame:
+    """
+    Replace all val to the desired object.
+    Arguments
+    ---------
+        df : pandas.DataFrame
+            Data Table to parse
+        val : str
+            Value to be replaced
+        to
+            Value to replace
+    """
+    for col in df.columns:
+        df[col].replace( val, to )
+    return df
+
 
 def split_table( df : pandas.DataFrame, col : str = "LEGEND" ) -> dict:
     """
@@ -122,8 +138,9 @@ def reduceTable( df : pandas.DataFrame ) -> pandas.DataFrame:
     with open( config_path, "r" ) as file:
         config = json.load( file )
     rcols = config.get( "columns-reduced", [] )
+    kcols = config.get( "keep-columns", [] )
     util = CTableUtils()
-    return util.reduce_table( df, rcols )
+    return util.reduce_table( df, rcols, kcols )
 
 
 def run_query( mode : list = [ "full", "full-filter", "reduced", "reduced-filter" ] ) -> dict:
@@ -148,7 +165,7 @@ def run_query( mode : list = [ "full", "full-filter", "reduced", "reduced-filter
     """
     try:
         with Query() as q:
-            df = q.getTable( "$dtHT$ftT" )
+            df = parse_undef( q.getTable( "$dtHT$ftT" ) )
     except Exception:
         print( "Closing program!" )
 
