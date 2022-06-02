@@ -55,7 +55,7 @@ class CTableUtils():
         rcols = [ col.lower() for col in ncols ]
         common_cols = [ col for col in list( df.columns ) if col.lower() in rcols ]
         dt = df[ common_cols ]
-        dt['TimeStr'] = dt['TimeStr'].apply(lambda x: pandas.Timestamp(x).strftime('%m/%d/%Y %H:%M:%S')) #"16/05/2022 16:00:01"
+        dt['TimeStr'] = pandas.to_datetime( dt['TimeInt'], unit='s' )
         for col in kcols:
             if col not in common_cols:
                 dt[col] = numpy.nan
